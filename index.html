@@ -1,1 +1,74 @@
-index.html
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SGK Mülakat Akademi</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;font-family:Arial;color:#172033}
+header{background:#123b68;color:white;padding:25px 18px}
+header h1{margin:0 0 8px}
+main{max-width:700px;margin:20px auto;padding:15px}
+.card{background:white;padding:20px;border-radius:16px;margin:14px 0;box-shadow:0 3px 12px #0001}
+button{background:#1765a5;color:white;border:0;padding:13px 18px;border-radius:9px;font-size:16px;margin:5px 3px;cursor:pointer}
+.answer{display:none;background:#eaf4ff;padding:15px;border-radius:10px;line-height:1.6}
+small{color:#64748b}
+</style>
+</head>
+<body>
+<header>
+<h1>SGK Mülakat Akademi</h1>
+<p>Denetmen Yardımcılığı Mülakat Hazırlık Uygulaması</p>
+</header>
+<main>
+<div class="card">
+<h2>Çalışma Paneli</h2>
+<p>SGK, sosyal güvenlik, hukuk ve maliye mülakat soruları.</p>
+<button onclick="randomQuestion()">Rastgele Soru</button>
+</div>
+<div class="card">
+<small id="category">SGK MEVZUATI</small>
+<h2 id="question">5510 sayılı Kanun'un amacı nedir?</h2>
+<div id="answer" class="answer"></div>
+<button onclick="showAnswer()">Cevabı Göster</button>
+<button onclick="nextQuestion()">Sonraki Soru</button>
+</div>
+<div class="card">
+<h3>Çalışma İlerlemesi</h3>
+<p id="counter">İncelenen cevap: 0</p>
+</div>
+</main>
+<script>
+const questions=[
+["SGK MEVZUATI","5510 sayılı Kanun'un amacı nedir?","Sosyal sigortalar ve genel sağlık sigortasının kapsamını, kişilerin hak ve yükümlülüklerini, finansmanını ve uygulama esaslarını düzenlemektir."],
+["SGK MEVZUATI","SGK'nın temel görevleri nelerdir?","Sosyal güvenlik politikalarını uygulamak, sosyal sigorta ve genel sağlık sigortası hizmetlerini yürütmek, primleri toplamak ve hak sahiplerine ödemeleri yapmaktır."],
+["HUKUK","Anayasa'nın 60. maddesi neyi düzenler?","Herkes sosyal güvenlik hakkına sahiptir. Devlet bu güvenliği sağlayacak gerekli tedbirleri alır ve teşkilatı kurar."],
+["İDARE HUKUKU","657 sayılı Kanun'un temel ilkeleri nelerdir?","Sınıflandırma, kariyer ve liyakat ilkeleridir."],
+["SGK MEVZUATI","Sosyal sigorta kolları nelerdir?","Kısa vadeli sigorta kolları, uzun vadeli sigorta kolları ve genel sağlık sigortasıdır."],
+["MALİYE","Verginin temel unsurları nelerdir?","Verginin konusu, mükellefi, matrahı, oranı ve vergiyi doğuran olaydır."],
+["SGK MEVZUATI","4/a sigortalısı kimdir?","Bir veya birden fazla işveren tarafından hizmet akdiyle çalıştırılan kişidir."],
+["SGK MEVZUATI","4/b sigortalısı kimdir?","Kendi adına ve hesabına bağımsız çalışanlar ile kanunda sayılan diğer kişilerdir."],
+["SGK MEVZUATI","4/c sigortalısı kimdir?","Kamu idarelerinde ilgili mevzuata göre çalışan ve kanunda 4/c kapsamında sayılan kişilerdir."],
+["GENEL KÜLTÜR","Kamu hizmetinde tarafsızlık ne demektir?","Kamu görevlisinin görevini siyasi, kişisel veya başka bir ayrım gözetmeden eşit ve objektif biçimde yerine getirmesidir."]
+];
+let current=0,solved=0;
+function render(){
+let q=questions[current];
+document.getElementById("category").innerText=q[0];
+document.getElementById("question").innerText=q[1];
+document.getElementById("answer").innerText=q[2];
+document.getElementById("answer").style.display="none";
+}
+function showAnswer(){
+document.getElementById("answer").style.display="block";
+solved++;
+document.getElementById("counter").innerText="İncelenen cevap: "+solved;
+}
+function nextQuestion(){current=(current+1)%questions.length;render();}
+function randomQuestion(){current=Math.floor(Math.random()*questions.length);render();}
+render();
+</script>
+</body>
+</html>
