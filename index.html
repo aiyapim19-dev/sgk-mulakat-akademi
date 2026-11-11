@@ -4,71 +4,233 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SGK Mülakat Akademi</title>
+<meta name="theme-color" content="#123b70">
+<title>SGK Mülakat Akademi 2.0</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f1f5f9;font-family:Arial;color:#172033}
-header{background:#123b68;color:white;padding:25px 18px}
-header h1{margin:0 0 8px}
-main{max-width:700px;margin:20px auto;padding:15px}
-.card{background:white;padding:20px;border-radius:16px;margin:14px 0;box-shadow:0 3px 12px #0001}
-button{background:#1765a5;color:white;border:0;padding:13px 18px;border-radius:9px;font-size:16px;margin:5px 3px;cursor:pointer}
-.answer{display:none;background:#eaf4ff;padding:15px;border-radius:10px;line-height:1.6}
-small{color:#64748b}
+body{margin:0;background:#f1f5f9;font-family:Arial,sans-serif;color:#172033}
+header{background:#123b70;color:white;padding:25px 18px}
+header h1{margin:0 0 8px;font-size:27px}
+header p{margin:0;color:#dbeafe}
+main{max-width:850px;margin:20px auto;padding:12px}
+.card{background:white;padding:19px;border-radius:15px;margin:14px 0;box-shadow:0 3px 12px #0001}
+h2{font-size:21px}
+button,select,input{font-size:15px;border-radius:9px;padding:12px;margin:5px 3px}
+button{background:#1765a5;color:white;border:0;cursor:pointer}
+button.secondary{background:#e5edf7;color:#123b70}
+button:active{opacity:.7}
+select,input{border:1px solid #cbd5e1;background:white;max-width:100%}
+.answer{display:none;background:#eaf4ff;padding:15px;border-radius:10px;line-height:1.7;margin-top:12px}
+.tag{color:#1765a5;font-weight:bold;font-size:13px}
+.muted{color:#64748b;font-size:14px}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{background:#eaf4ff;padding:12px;border-radius:10px;flex:1;min-width:110px}
+.stat strong{display:block;font-size:23px;color:#123b70}
+.progress{height:10px;background:#e2e8f0;border-radius:10px;overflow:hidden}
+.bar{height:100%;background:#16845b;width:0}
+#feedback{font-weight:bold;margin-top:12px}
+nav{display:flex;flex-wrap:wrap;gap:5px}
+nav button{flex:1;min-width:100px}
+.hidden{display:none}
 </style>
 </head>
 <body>
 <header>
 <h1>SGK Mülakat Akademi</h1>
-<p>Denetmen Yardımcılığı Mülakat Hazırlık Uygulaması</p>
+<p>Denetmen Yardımcılığı – Sözlü Sınav Hazırlık Uygulaması 2.0</p>
 </header>
+
 <main>
 <div class="card">
-<h2>Çalışma Paneli</h2>
-<p>SGK, sosyal güvenlik, hukuk ve maliye mülakat soruları.</p>
-<button onclick="randomQuestion()">Rastgele Soru</button>
+<h2>Çalışma paneli</h2>
+<p>SGK mevzuatı, sosyal güvenlik, hukuk, maliye ve denetim konularında hazırlan.</p>
+<div class="stats">
+<div class="stat"><strong id="total">0</strong><span>Soru sayısı</span></div>
+<div class="stat"><strong id="seen">0</strong><span>İncelenen</span></div>
+<div class="stat"><strong id="known">0</strong><span>Öğrenilen</span></div>
 </div>
+<p class="muted">Çalışma ilerlemen bu tarayıcıda saklanır.</p>
+<div class="progress"><div class="bar" id="bar"></div></div>
+</div>
+
 <div class="card">
-<small id="category">SGK MEVZUATI</small>
-<h2 id="question">5510 sayılı Kanun'un amacı nedir?</h2>
-<div id="answer" class="answer"></div>
-<button onclick="showAnswer()">Cevabı Göster</button>
-<button onclick="nextQuestion()">Sonraki Soru</button>
+<h2>Çalışma modu</h2>
+<nav>
+<button onclick="showPage('study')">Soru bankası</button>
+<button onclick="showPage('oral')">Sözlü mülakat</button>
+<button onclick="showPage('all')">Konu listesi</button>
+</nav>
 </div>
+
+<section id="study">
 <div class="card">
-<h3>Çalışma İlerlemesi</h3>
-<p id="counter">İncelenen cevap: 0</p>
+<h2>Soru bankası</h2>
+<select id="category" onchange="filterQuestions()">
+<option value="Tümü">Tüm kategoriler</option>
+<option>SGK Mevzuatı</option>
+<option>İş ve Sosyal Güvenlik Hukuku</option>
+<option>İdare Hukuku ve Anayasa</option>
+<option>Maliye ve Vergi</option>
+<option>Denetim</option>
+<option>Genel Kültür</option>
+</select>
+<input id="search" placeholder="Soru ara..." oninput="filterQuestions()">
+<p class="muted" id="position"></p>
+<div class="tag" id="qcat"></div>
+<h2 id="question"></h2>
+<div class="answer" id="answer"></div>
+<button onclick="toggleAnswer()">Cevabı Göster / Gizle</button>
+<button class="secondary" onclick="nextQuestion()">Sonraki Soru</button>
+<button class="secondary" onclick="randomQuestion()">Rastgele Soru</button>
+<button onclick="markKnown()">Öğrendim</button>
 </div>
+</section>
+
+<section id="oral" class="hidden">
+<div class="card">
+<h2>Sözlü mülakat simülasyonu</h2>
+<p>Gerçek mülakattaymış gibi soruyu sesli cevapla. Ardından örnek cevabı incele ve kendini puanla.</p>
+<div class="tag" id="oralcat"></div>
+<h2 id="oralquestion">Başlamak için aşağıya dokun.</h2>
+<div class="answer" id="oralanswer"></div>
+<button onclick="newOral()">Yeni mülakat sorusu</button>
+<button class="secondary" onclick="showOralAnswer()">Örnek cevabı gör</button>
+<hr>
+<p><b>Kendine kaç puan veriyorsun?</b></p>
+<div>
+<button onclick="score(1)">1</button>
+<button onclick="score(2)">2</button>
+<button onclick="score(3)">3</button>
+<button onclick="score(4)">4</button>
+<button onclick="score(5)">5</button>
+</div>
+<p id="feedback"></p>
+</div>
+</section>
+
+<section id="all" class="hidden">
+<div class="card">
+<h2>Konu dağılımı</h2>
+<div id="topics"></div>
+</div>
+</section>
 </main>
+
 <script>
-const questions=[
-["SGK MEVZUATI","5510 sayılı Kanun'un amacı nedir?","Sosyal sigortalar ve genel sağlık sigortasının kapsamını, kişilerin hak ve yükümlülüklerini, finansmanını ve uygulama esaslarını düzenlemektir."],
-["SGK MEVZUATI","SGK'nın temel görevleri nelerdir?","Sosyal güvenlik politikalarını uygulamak, sosyal sigorta ve genel sağlık sigortası hizmetlerini yürütmek, primleri toplamak ve hak sahiplerine ödemeleri yapmaktır."],
-["HUKUK","Anayasa'nın 60. maddesi neyi düzenler?","Herkes sosyal güvenlik hakkına sahiptir. Devlet bu güvenliği sağlayacak gerekli tedbirleri alır ve teşkilatı kurar."],
-["İDARE HUKUKU","657 sayılı Kanun'un temel ilkeleri nelerdir?","Sınıflandırma, kariyer ve liyakat ilkeleridir."],
-["SGK MEVZUATI","Sosyal sigorta kolları nelerdir?","Kısa vadeli sigorta kolları, uzun vadeli sigorta kolları ve genel sağlık sigortasıdır."],
-["MALİYE","Verginin temel unsurları nelerdir?","Verginin konusu, mükellefi, matrahı, oranı ve vergiyi doğuran olaydır."],
-["SGK MEVZUATI","4/a sigortalısı kimdir?","Bir veya birden fazla işveren tarafından hizmet akdiyle çalıştırılan kişidir."],
-["SGK MEVZUATI","4/b sigortalısı kimdir?","Kendi adına ve hesabına bağımsız çalışanlar ile kanunda sayılan diğer kişilerdir."],
-["SGK MEVZUATI","4/c sigortalısı kimdir?","Kamu idarelerinde ilgili mevzuata göre çalışan ve kanunda 4/c kapsamında sayılan kişilerdir."],
-["GENEL KÜLTÜR","Kamu hizmetinde tarafsızlık ne demektir?","Kamu görevlisinin görevini siyasi, kişisel veya başka bir ayrım gözetmeden eşit ve objektif biçimde yerine getirmesidir."]
+const questions = [
+["SGK Mevzuatı","5510 sayılı Kanun'un amacı nedir?","5510 sayılı Kanun; sosyal sigortalar ile genel sağlık sigortasının kapsamını, kişilerin hak ve yükümlülüklerini, finansmanını ve uygulanmasına ilişkin esasları düzenler."],
+["SGK Mevzuatı","SGK'nın temel görevleri nelerdir?","Sosyal güvenlik politikalarının uygulanmasına katkı sağlamak, sosyal sigortalar ve genel sağlık sigortası hizmetlerini yürütmek, primleri tahsil etmek ve hak sahiplerine mevzuatta öngörülen yardımları sağlamaktır."],
+["SGK Mevzuatı","4/a sigortalısı kimdir?","Bir veya birden fazla işveren tarafından hizmet akdiyle çalıştırılan kişilerdir."],
+["SGK Mevzuatı","4/b sigortalısı kimdir?","Kendi adına ve hesabına bağımsız çalışanlar ile kanunda belirtilen diğer kişilerdir."],
+["SGK Mevzuatı","4/c sigortalısı kimdir?","Kamu idarelerinde ilgili mevzuata göre kamu görevlisi statüsünde çalışan ve kanunun 4/c kapsamında saydığı kişilerdir."],
+["SGK Mevzuatı","Genel sağlık sigortasının amacı nedir?","Kişilerin sağlıklarının korunmasını, sağlık riskleriyle karşılaşmaları hâlinde sağlık hizmetlerine erişmelerini ve bu hizmetlerin finansmanını sağlamaktır."],
+["SGK Mevzuatı","Kısa vadeli sigorta kolları nelerdir?","İş kazası ve meslek hastalığı sigortası ile hastalık ve analık sigortasıdır."],
+["SGK Mevzuatı","Uzun vadeli sigorta kolları nelerdir?","Malullük, yaşlılık ve ölüm sigortalarıdır."],
+["SGK Mevzuatı","İş kazası nedir?","5510 sayılı Kanun'un 13. maddesinde sayılan hâllerde meydana gelen ve sigortalıyı hemen veya sonradan bedenen ya da ruhen engelli hâle getiren olaydır."],
+["SGK Mevzuatı","Meslek hastalığı nedir?","Sigortalının yaptığı işin niteliğinden dolayı tekrarlanan bir sebeple veya işin yürütüm şartları nedeniyle uğradığı geçici ya da sürekli hastalık veya engellilik hâlidir."],
+["SGK Mevzuatı","Prim nedir?","Sosyal sigorta ve genel sağlık sigortası hizmetlerinin finansmanında kullanılan, kanunda belirlenen esaslara göre alınan tutardır."],
+["SGK Mevzuatı","Hizmet dökümü neyi gösterir?","Sigortalının SGK kayıtlarında yer alan çalışma dönemlerini, işveren bilgilerini, prim günlerini ve prime esas kazançlarını gösterir."],
+["İş ve Sosyal Güvenlik Hukuku","İş sözleşmesi nedir?","İşçinin bağımlı olarak iş görmeyi, işverenin de ücret ödemeyi üstlendiği sözleşmedir."],
+["İş ve Sosyal Güvenlik Hukuku","İşveren kimdir?","İşçi çalıştıran gerçek veya tüzel kişiye ya da tüzel kişiliği olmayan kurum ve kuruluşlara işveren denir."],
+["İş ve Sosyal Güvenlik Hukuku","İş kazası bildirimi neden önemlidir?","Olayın mevzuata uygun biçimde kayıt altına alınmasını, inceleme yapılmasını ve sigortalının haklarının belirlenmesini sağlar."],
+["İş ve Sosyal Güvenlik Hukuku","Hizmet akdi ile bağımsız çalışma arasındaki temel fark nedir?","Hizmet akdinde işçi işverene bağımlı çalışır. Bağımsız çalışan ise kendi adına ve hesabına faaliyet gösterir."],
+["İdare Hukuku ve Anayasa","Anayasa'nın 60. maddesi neyi düzenler?","Herkes sosyal güvenlik hakkına sahiptir. Devlet, bu güvenliği sağlayacak gerekli tedbirleri alır ve teşkilatı kurar."],
+["İdare Hukuku ve Anayasa","İdarenin kanuniliği ilkesi nedir?","İdarenin kuruluşunun ve faaliyetlerinin hukuka ve kanunlara dayanmasıdır."],
+["İdare Hukuku ve Anayasa","657 sayılı Kanun'un temel ilkeleri nelerdir?","Sınıflandırma, kariyer ve liyakat ilkeleridir."],
+["İdare Hukuku ve Anayasa","Kamu görevlisinin tarafsızlığı ne anlama gelir?","Kamu görevlisinin görevini siyasi düşünce, kişisel çıkar veya başka bir ayrım gözetmeden eşit ve objektif biçimde yerine getirmesidir."],
+["Maliye ve Vergi","Verginin temel unsurları nelerdir?","Verginin konusu, mükellefi, vergi sorumlusu, matrahı, oranı ve vergiyi doğuran olay temel unsurlar arasındadır."],
+["Maliye ve Vergi","Vergiyi doğuran olay nedir?","Vergi kanunlarının vergi borcunun doğumuna bağladığı olayın gerçekleşmesi veya hukuki durumun tamamlanmasıdır."],
+["Maliye ve Vergi","Bütçe nedir?","Kamu kurumlarının belirli bir dönem için gelir ve gider tahminlerini gösteren ve bunların uygulanmasına izin veren hukuki belgedir."],
+["Maliye ve Vergi","Kamu harcaması nedir?","Kamu hizmetlerinin yürütülmesi amacıyla kamu idareleri tarafından yapılan harcamalardır."],
+["Denetim","Denetimin temel amacı nedir?","Faaliyetlerin mevzuata, belirlenen standartlara ve hedeflere uygunluğunu incelemek; hata, usulsüzlük ve riskleri tespit ederek iyileştirmeye katkı sağlamaktır."],
+["Denetim","Denetimde tarafsızlık neden önemlidir?","Denetim sonuçlarının kişisel düşünce ve çıkarlardan etkilenmeden, kanıta ve mevzuata dayanmasını sağlar."],
+["Denetim","Denetim kanıtı nedir?","Denetçinin ulaştığı sonuçları desteklemek amacıyla topladığı bilgi, belge, kayıt ve diğer verilerdir."],
+["Denetim","Risk odaklı denetim ne demektir?","Denetim kaynaklarının hata ve usulsüzlük ihtimali ile etkisinin daha yüksek olduğu alanlara öncelik verilerek kullanılmasıdır."],
+["Denetim","Denetçi raporunda nelere dikkat etmelidir?","Tespitlerin açık, nesnel, kanıta dayalı, anlaşılır ve mevzuata uygun biçimde yazılmasına dikkat etmelidir."],
+["Genel Kültür","Kamu hizmetinde etik davranışın önemi nedir?","Kamu yönetimine güveni artırır; dürüstlük, tarafsızlık, saydamlık ve hesap verebilirliği destekler."],
+["Genel Kültür","Kamu yönetiminde hesap verebilirlik nedir?","Kamu görevlilerinin yetki ve kaynak kullanımına ilişkin kararlarını açıklayabilmesi ve sonuçlarından sorumlu olmasıdır."]
 ];
-let current=0,solved=0;
+
+let filtered = [...questions];
+let current = 0;
+let oralIndex = -1;
+let seen = JSON.parse(localStorage.getItem("sgkSeen") || "[]");
+let known = JSON.parse(localStorage.getItem("sgkKnown") || "[]");
+let oralScores = JSON.parse(localStorage.getItem("sgkScores") || "[]");
+
+function updateStats(){
+ document.getElementById("total").textContent=questions.length;
+ document.getElementById("seen").textContent=seen.length;
+ document.getElementById("known").textContent=known.length;
+ document.getElementById("bar").style.width=(known.length/questions.length*100)+"%";
+}
 function render(){
-let q=questions[current];
-document.getElementById("category").innerText=q[0];
-document.getElementById("question").innerText=q[1];
-document.getElementById("answer").innerText=q[2];
-document.getElementById("answer").style.display="none";
+ if(!filtered.length){
+  document.getElementById("question").textContent="Bu aramayla eşleşen soru bulunamadı.";
+  document.getElementById("answer").style.display="none";
+  document.getElementById("qcat").textContent="";
+  document.getElementById("position").textContent="0 soru";
+  return;
+ }
+ current=Math.max(0,Math.min(current,filtered.length-1));
+ let q=filtered[current], id=questions.indexOf(q);
+ document.getElementById("qcat").textContent=q[0];
+ document.getElementById("question").textContent=q[1];
+ document.getElementById("answer").textContent=q[2];
+ document.getElementById("answer").style.display="none";
+ document.getElementById("position").textContent=(current+1)+" / "+filtered.length;
+ if(!seen.includes(id)){seen.push(id);localStorage.setItem("sgkSeen",JSON.stringify(seen));}
+ updateStats();
 }
-function showAnswer(){
-document.getElementById("answer").style.display="block";
-solved++;
-document.getElementById("counter").innerText="İncelenen cevap: "+solved;
+function filterQuestions(){
+ let cat=document.getElementById("category").value;
+ let term=document.getElementById("search").value.toLocaleLowerCase("tr");
+ filtered=questions.filter(q=>(cat==="Tümü"||q[0]===cat)&&
+ (q[1]+" "+q[2]).toLocaleLowerCase("tr").includes(term));
+ current=0;render();
 }
-function nextQuestion(){current=(current+1)%questions.length;render();}
-function randomQuestion(){current=Math.floor(Math.random()*questions.length);render();}
-render();
+function toggleAnswer(){
+ let a=document.getElementById("answer");
+ a.style.display=a.style.display==="block"?"none":"block";
+}
+function nextQuestion(){if(filtered.length){current=(current+1)%filtered.length;render();}}
+function randomQuestion(){if(filtered.length){current=Math.floor(Math.random()*filtered.length);render();}}
+function markKnown(){
+ if(!filtered.length)return;
+ let id=questions.indexOf(filtered[current]);
+ if(!known.includes(id)){known.push(id);localStorage.setItem("sgkKnown",JSON.stringify(known));}
+ updateStats();nextQuestion();
+}
+function showPage(page){
+ ["study","oral","all"].forEach(p=>document.getElementById(p).classList.add("hidden"));
+ document.getElementById(page).classList.remove("hidden");
+ if(page==="all")renderTopics();
+}
+function renderTopics(){
+ let counts={};
+ questions.forEach(q=>counts[q[0]]=(counts[q[0]]||0)+1);
+ document.getElementById("topics").innerHTML=Object.entries(counts).map(([k,v])=>"<p><b>"+k+"</b> — "+v+" soru</p>").join("");
+}
+function newOral(){
+ oralIndex=Math.floor(Math.random()*questions.length);
+ document.getElementById("oralcat").textContent=questions[oralIndex][0];
+ document.getElementById("oralquestion").textContent=questions[oralIndex][1];
+ document.getElementById("oralanswer").textContent=questions[oralIndex][2];
+ document.getElementById("oralanswer").style.display="none";
+ document.getElementById("feedback").textContent="";
+}
+function showOralAnswer(){
+ if(oralIndex<0){newOral();return;}
+ document.getElementById("oralanswer").style.display="block";
+}
+function score(n){
+ if(oralIndex<0){newOral();return;}
+ oralScores.push(n);
+ localStorage.setItem("sgkScores",JSON.stringify(oralScores));
+ let msg=["Tekrar çalışmalısın.","Temel bilgileri gözden geçir.","Orta düzey. Cevabını geliştir.","İyi. Biraz daha ayrıntı ekle.","Çok iyi. Cevabın güçlü."];
+ document.getElementById("feedback").textContent="Puanın: "+n+"/5 — "+msg[n-1];
+}
+updateStats();render();newOral();
 </script>
 </body>
 </html>
